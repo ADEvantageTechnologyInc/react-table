@@ -23,7 +23,6 @@ export default Component => {
       if (ri && ri.groupedByPivot) {
         const cell = { ...props.children[ri.level] }
 
-        cell.props.style.flex = 'unset'
         cell.props.style.width = '100%'
         cell.props.style.maxWidth = 'unset'
         cell.props.style.paddingLeft = `${this.props.treeTableIndent * ri.level}px`

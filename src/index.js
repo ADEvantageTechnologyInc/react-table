@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment as RF } from 'react'
 import classnames from 'classnames'
 //
 import _ from './utils'
@@ -197,17 +197,6 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
     // Visual Components
 
     const makeHeaderGroup = (column, i) => {
-      const resizedValue = col => (resized.find(x => x.id === col.id) || {}).value
-      const flex = _.sum(
-        column.columns.map(col => (col.width || resizedValue(col) ? 0 : col.minWidth))
-      )
-      const width = _.sum(
-        column.columns.map(col => _.getFirstDefined(resizedValue(col), col.width, col.minWidth))
-      )
-      const maxWidth = _.sum(
-        column.columns.map(col => _.getFirstDefined(resizedValue(col), col.width, col.maxWidth))
-      )
-
       const theadGroupThProps = _.splitProps(
         getTheadGroupThProps(finalState, undefined, column, this)
       )
@@ -232,19 +221,12 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
         ...columnHeaderProps.rest,
       }
 
-      const flexStyles = {
-        flex: `${flex} 0 auto`,
-        width: _.asPx(width),
-        maxWidth: _.asPx(maxWidth),
-      }
-
       return (
         <ThComponent
           key={`${i}-${column.id}`}
           className={classnames(classes)}
           style={{
             ...styles,
-            ...flexStyles,
           }}
           {...rest}
         >
@@ -331,7 +313,6 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
           )}
           style={{
             ...styles,
-            flex: `${width} 0 auto`,
             width: _.asPx(width),
             maxWidth: _.asPx(maxWidth),
           }}
@@ -414,7 +395,6 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
           className={classnames(classes)}
           style={{
             ...styles,
-            flex: `${width} 0 auto`,
             width: _.asPx(width),
             maxWidth: _.asPx(maxWidth),
           }}
@@ -478,7 +458,7 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
       }
       const isExpanded = _.get(expanded, rowInfo.nestingPath)
       const trProps = _.splitProps(getTrProps(finalState, rowInfo, undefined, this))
-      return <>
+      return <RF key={`row-${i}`}>
         <TrComponent
           className={classnames(trProps.className, row._viewIndex % 2 ? '-even' : '-odd')}
           style={trProps.style}
@@ -646,7 +626,6 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
               )}
               style={{
                 ...styles,
-                flex: `${width} 0 auto`,
                 width: _.asPx(width),
                 maxWidth: _.asPx(maxWidth),
               }}
@@ -662,18 +641,17 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
           isExpanded &&
           rowInfo.subRows.map((d, i) => makePageRow(d, i, rowInfo.nestingPath))}
         {SubComponent && !rowInfo.subRows && isExpanded && <TrComponent>
-          <TdComponent colspan={allVisibleColumns.length}>
+          <TdComponent colSpan={allVisibleColumns.length}>
             {SubComponent(rowInfo)}
           </TdComponent>
         </TrComponent>}
-      </>
+      </RF>
     }
 
     const makePadColumn = (column, i) => {
       const resizedCol = resized.find(x => x.id === column.id) || {}
       const show = typeof column.show === 'function' ? column.show() : column.show
       const width = _.getFirstDefined(resizedCol.value, column.width, column.minWidth)
-      const flex = width
       const maxWidth = _.getFirstDefined(resizedCol.value, column.width, column.maxWidth)
       const tdProps = _.splitProps(getTdProps(finalState, undefined, column, this))
       const columnProps = _.splitProps(column.getProps(finalState, undefined, column, this))
@@ -692,7 +670,6 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
           className={classnames(classes, !show && 'hidden')}
           style={{
             ...styles,
-            flex: `${flex} 0 auto`,
             width: _.asPx(width),
             maxWidth: _.asPx(maxWidth),
           }}
@@ -753,7 +730,6 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
           className={classnames(classes, !show && 'hidden')}
           style={{
             ...styles,
-            flex: `${width} 0 auto`,
             width: _.asPx(width),
             maxWidth: _.asPx(maxWidth),
           }}
