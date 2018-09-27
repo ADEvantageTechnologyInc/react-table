@@ -110,8 +110,6 @@ import 'react-table/react-table.css'
 <link rel="stylesheet" href="node_modules/react-table/react-table.css">
 ```
 
-Testing.
-
 ##### CDN
 
 ```html
