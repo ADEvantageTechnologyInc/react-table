@@ -479,8 +479,7 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
       const isExpanded = _.get(expanded, rowInfo.nestingPath)
       const trGroupProps = getTrGroupProps(finalState, rowInfo, undefined, this)
       const trProps = _.splitProps(getTrProps(finalState, rowInfo, undefined, this))
-      return (
-        <TrGroupComponent key={rowInfo.nestingPath.join('_')} {...trGroupProps}>
+      return <>
           <TrComponent
             className={classnames(trProps.className, row._viewIndex % 2 ? '-even' : '-odd')}
             style={trProps.style}
@@ -666,8 +665,7 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
             isExpanded &&
             rowInfo.subRows.map((d, i) => makePageRow(d, i, rowInfo.nestingPath))}
           {SubComponent && !rowInfo.subRows && isExpanded && SubComponent(rowInfo)}
-        </TrGroupComponent>
-      )
+      </>
     }
 
     const makePadColumn = (column, i) => {

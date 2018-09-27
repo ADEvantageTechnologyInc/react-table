@@ -176,32 +176,38 @@ export default {
 
   // Components
   TableComponent: ({ children, className, ...rest }) => (
-    <div
+    <table
       className={classnames('rt-table', className)}
       role="grid"
       // tabIndex='0'
       {...rest}
     >
       {children}
-    </div>
+    </table>
   ),
-  TheadComponent: _.makeTemplateComponent('rt-thead', 'Thead'),
-  TbodyComponent: _.makeTemplateComponent('rt-tbody', 'Tbody'),
-  TrGroupComponent: ({ children, className, ...rest }) => (
-    <div className={classnames('rt-tr-group', className)} role="rowgroup" {...rest}>
+  TheadComponent: ({ children, className, ...rest }) => (
+    <thead className={classnames('rt-thead', className)} {...rest}>
       {children}
-    </div>
+    </thead>),
+  TbodyComponent: ({ children, className, ...rest }) => (
+    <tbody className={classnames('rt-tbody', className)} {...rest}>
+      {children}
+    </tbody>),
+  TrGroupComponent: ({ children, className, ...rest }) => (
+    <tbody className={classnames('rt-tr-group', className)} {...rest}>
+      {children}
+    </tbody>
   ),
   TrComponent: ({ children, className, ...rest }) => (
-    <div className={classnames('rt-tr', className)} role="row" {...rest}>
+    <tr className={classnames('rt-tr', className)} role="row" {...rest}>
       {children}
-    </div>
+    </tr>
   ),
   ThComponent: ({
     toggleSort, className, children, ...rest
   }) => (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-    <div
+    <th
       className={classnames('rt-th', className)}
       onClick={e => toggleSort && toggleSort(e)}
       role="columnheader"
@@ -209,14 +215,14 @@ export default {
       {...rest}
     >
       {children}
-    </div>
+    </th>
   ),
   TdComponent: ({
     toggleSort, className, children, ...rest
   }) => (
-    <div className={classnames('rt-td', className)} role="gridcell" {...rest}>
+    <td className={classnames('rt-td', className)} role="gridcell" {...rest}>
       {children}
-    </div>
+    </td>
   ),
   TfootComponent: _.makeTemplateComponent('rt-tfoot', 'Tfoot'),
   FilterComponent: ({ filter, onChange }) => (
