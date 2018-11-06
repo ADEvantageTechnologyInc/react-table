@@ -33,10 +33,11 @@
     "build:css": "rimraf react-table.css && stylus src/index.styl --compress -o react-table.css && yarn css:autoprefix",
     "css:autoprefix": "postcss --use autoprefixer react-table.css -r",
     "watch": "npm-run-all --parallel watch:*",
-    "watch:js": "onchange \"src/**/*.js\" -i -- npm run build:cjs",
-    "watch:css": "onchange \"src/**/*.styl\" -i -- npm run build:css",
+    "watch:js": "onchange 'src/**/*.js' -i -- npm run build:cjs",
+    "watch:css": "onchange 'src/**/*.styl' -i -- npm run build:css",
     "test": "eslint src",
     "build": "npm-run-all build:*",
+    "prepublish": "npm build",
     "postpublish": "git push --tags",
     "docs": "yarn watch & cd docs && yarn && yarn start",
     "docs:build": "yarn build && cd docs && yarn && yarn build"

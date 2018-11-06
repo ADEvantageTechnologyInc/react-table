@@ -359,10 +359,6 @@ These are all of the available props (and their default values) for the main `<R
   pageText: 'Page',
   ofText: 'of',
   rowsText: 'rows',
-  
-  // Accessibility Labels
-  pageJumpText: 'jump to page',
-  rowsSelectorText: 'rows per page',
 }
 ```
 
@@ -639,9 +635,6 @@ Every single built-in component's props can be dynamically extended using any on
   getTheadProps={fn}
   getTheadTrProps={fn}
   getTheadThProps={fn}
-  getTheadFilterProps={fn}
-  getTheadFilterTrProps={fn}
-  getTheadFilterThProps={fn}
   getTbodyProps={fn}
   getTrGroupProps={fn}
   getTrProps={fn}
@@ -833,7 +826,7 @@ If you want to handle pagination, sorting, and filtering on the server, `react-t
 />
 ```
 
-For a detailed example, take a peek at our <a href="https://react-table.js.org/#/story/server-side-data" target="\_parent">async table mockup</a>
+For a detailed example, take a peek at our <a href="https://github.com/react-tools/react-table/blob/master/stories/ServerSide.js" target="\_parent">async table mockup</a>
 
 ## Fully Controlled Component
 
