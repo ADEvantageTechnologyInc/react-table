@@ -37,7 +37,7 @@
     "watch:css": "onchange 'src/**/*.styl' -i -- npm run build:css",
     "test": "eslint src",
     "build": "npm-run-all build:*",
-    "prepublish": "npm build",
+    "prepublish": "npm run-script build",
     "postpublish": "git push --tags",
     "docs": "yarn watch & cd docs && yarn && yarn start",
     "docs:build": "yarn build && cd docs && yarn && yarn build"
