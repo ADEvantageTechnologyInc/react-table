@@ -620,7 +620,7 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
               key={`${i2}-${column.id}`}
               className={classnames(
                 classes,
-                !show && 'hidden',
+                    !cellInfo.expandable && !show && 'hidden',
                 cellInfo.expandable && 'rt-expandable',
                 (isBranch || isPreview) && 'rt-pivot'
               )}
@@ -642,8 +642,11 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
           rowInfo.subRows.map((d, i) => makePageRow(d, i, rowInfo.nestingPath))}
         {SubComponent && !rowInfo.subRows && isExpanded && <TrComponent>
           <TdComponent colSpan={allVisibleColumns.length}>
-            {SubComponent(rowInfo)}
-          </TdComponent>
+            {SubComponent(rowInfo, () => {
+          let newExpanded = _.clone(expanded)
+            newExpanded = _.set(newExpanded, cellInfo.nestingPath, false)
+          })}
+        </TdComponent>
         </TrComponent>}
       </RF>
     }
@@ -746,7 +749,7 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
     }
 
     const makeColumnFooters = () => {
-      const tFootProps = getTfootProps(finalState, undefined, undefined, this)
+      const tFootProps = _.splitProps(getTfootProps(finalState, undefined, undefined, this))
       const tFootTrProps = _.splitProps(getTfootTrProps(finalState, undefined, undefined, this))
       return (
         <TfootComponent
