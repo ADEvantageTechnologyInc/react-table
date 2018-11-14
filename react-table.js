@@ -499,7 +499,7 @@
   function normalizeComponent(Comp) {
     var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Comp;
-    return typeof Comp === 'function' ? Object.getPrototypeOf(Comp).isReactComponent ? React__default.createElement(Comp, params) : Comp(params) : fallback;
+    return typeof Comp === 'function' ? React__default.createElement(Comp, params) : fallback;
   }
 
   var Lifecycle = (function (Base) {
@@ -1271,12 +1271,19 @@
           key: "resizeColumnMoving",
           value: function resizeColumnMoving(event) {
             event.stopPropagation();
-            var onResizedChange = this.props.onResizedChange;
+            var _this$props2 = this.props,
+                onResizedChange = _this$props2.onResizedChange,
+                column = _this$props2.column;
 
             var _this$getResolvedStat4 = this.getResolvedState(),
                 resized = _this$getResolvedStat4.resized,
-                currentlyResizing = _this$getResolvedStat4.currentlyResizing; // Delete old value
+                currentlyResizing = _this$getResolvedStat4.currentlyResizing,
+                columns = _this$getResolvedStat4.columns;
 
+            var currentColumn = columns.find(function (c) {
+              return c.accessor === currentlyResizing.id;
+            });
+            var minResizeWidth = currentColumn ? currentColumn.minResizeWidth : column.minResizeWidth; // Delete old value
 
             var newResized = resized.filter(function (x) {
               return x.id !== currentlyResizing.id;
@@ -1287,11 +1294,9 @@
               pageX = event.changedTouches[0].pageX;
             } else if (event.type === 'mousemove') {
               pageX = event.pageX;
-            } // Set the min size to 10 to account for margin and border or else the
-            // group headers don't line up correctly
+            }
 
-
-            var newWidth = Math.max(currentlyResizing.parentWidth + pageX - currentlyResizing.startX, 11);
+            var newWidth = Math.max(currentlyResizing.parentWidth + pageX - currentlyResizing.startX, minResizeWidth);
             newResized.push({
               id: currentlyResizing.id,
               value: newWidth
@@ -1336,8 +1341,6 @@
     );
   });
 
-  // import _ from './utils'
-
   var defaultButton = function defaultButton(props) {
     return React__default.createElement("button", _extends({
       type: "button"
@@ -1369,9 +1372,11 @@
     _createClass(ReactTablePagination, [{
       key: "componentWillReceiveProps",
       value: function componentWillReceiveProps(nextProps) {
-        this.setState({
-          page: nextProps.page
-        });
+        if (this.props.page !== nextProps.page) {
+          this.setState({
+            page: nextProps.page
+          });
+        }
       }
     }, {
       key: "getSafePage",
@@ -1443,6 +1448,7 @@
         }, this.props.pageText, ' ', showPageJump ? React__default.createElement("div", {
           className: "-pageJump"
         }, React__default.createElement("input", {
+          "aria-label": this.props.pageJumpText,
           type: this.state.page === '' ? 'text' : 'number',
           onChange: function onChange(e) {
             var val = e.target.value;
@@ -1472,6 +1478,7 @@
         }, pages || 1)), showPageSizeOptions && React__default.createElement("span", {
           className: "select-wrap -pageSizeOptions"
         }, React__default.createElement("select", {
+          "aria-label": this.props.rowsSelectorText,
           onChange: function onChange(e) {
             return onPageSizeChange(Number(e.target.value));
           },
@@ -1623,6 +1630,7 @@
       PivotValue: undefined,
       Expander: undefined,
       Filter: undefined,
+      Placeholder: undefined,
       // All Columns
       sortable: undefined,
       // use table default
@@ -1632,6 +1640,7 @@
       // use table default
       show: true,
       minWidth: 100,
+      minResizeWidth: 11,
       // Cells only
       className: '',
       style: {},
@@ -1667,6 +1676,8 @@
     pageText: 'Page',
     ofText: 'of',
     rowsText: 'rows',
+    pageJumpText: 'jump to page',
+    rowsSelectorText: 'rows per page',
     // Components
     TableComponent: function TableComponent(_ref) {
       var children = _ref.children,
@@ -1748,12 +1759,14 @@
     TfootComponent: _.makeTemplateComponent('rt-tfoot', 'Tfoot'),
     FilterComponent: function FilterComponent(_ref8) {
       var filter = _ref8.filter,
-          _onChange = _ref8.onChange;
+          _onChange = _ref8.onChange,
+          column = _ref8.column;
       return React__default.createElement("input", {
         type: "text",
         style: {
           width: '100%'
         },
+        placeholder: column.Placeholder,
         value: filter ? filter.value : '',
         onChange: function onChange(event) {
           return _onChange(event.target.value);
@@ -2794,6 +2807,7 @@
       // use table default
       show: propTypes.bool,
       minWidth: propTypes.number,
+      minResizeWidth: propTypes.number,
       // Cells only
       className: propTypes.string,
       style: propTypes.object,
@@ -2807,7 +2821,7 @@
       // Footers only
       footerClassName: propTypes.string,
       footerStyle: propTypes.object,
-      getFooterProps: propTypes.object,
+      getFooterProps: propTypes.func,
       filterMethod: propTypes.func,
       filterAll: propTypes.bool,
       sortMethod: propTypes.func
@@ -2828,6 +2842,8 @@
     pageText: propTypes.node,
     ofText: propTypes.node,
     rowsText: propTypes.node,
+    pageJumpText: propTypes.node,
+    rowsSelectorText: propTypes.node,
     // Components
     TableComponent: propTypes.oneOfType([propTypes.func, propTypes.element]),
     TheadComponent: propTypes.oneOfType([propTypes.func, propTypes.element]),
@@ -3389,7 +3405,7 @@
             return React__default.createElement(TdComponent // eslint-disable-next-line react/no-array-index-key
             , _extends({
               key: "".concat(i2, "-").concat(column.id),
-              className: classnames(classes, !show && 'hidden', cellInfo.expandable && 'rt-expandable', (isBranch || isPreview) && 'rt-pivot'),
+              className: classnames(classes, !cellInfo.expandable && !show && 'hidden', cellInfo.expandable && 'rt-expandable', (isBranch || isPreview) && 'rt-pivot'),
               style: _objectSpread({}, styles, {
                 width: _.asPx(width),
                 maxWidth: _.asPx(maxWidth)
@@ -3399,7 +3415,11 @@
             return makePageRow(d, i, rowInfo.nestingPath);
           }), SubComponent && !rowInfo.subRows && isExpanded && React__default.createElement(TrComponent, null, React__default.createElement(TdComponent, {
             colSpan: allVisibleColumns.length
-          }, SubComponent(rowInfo))));
+          }, SubComponent(rowInfo, function () {
+            var newExpanded = _.clone(expanded);
+
+            newExpanded = _.set(newExpanded, cellInfo.nestingPath, false);
+          }))));
         };
 
         var makePadColumn = function makePadColumn(column, i) {
@@ -3431,13 +3451,11 @@
         };
 
         var makePadRow = function makePadRow(row, i) {
-          var trGroupProps = getTrGroupProps(finalState, undefined, undefined, _this2);
-
           var trProps = _.splitProps(getTrProps(finalState, undefined, undefined, _this2));
 
-          return React__default.createElement(TrGroupComponent, _extends({
-            key: "pad-".concat(i)
-          }, trGroupProps), React__default.createElement(TrComponent, {
+          return React__default.createElement(React.Fragment, {
+            key: "row-".concat(i)
+          }, React__default.createElement(TrComponent, {
             className: classnames('-padRow', (pageRows.length + i) % 2 ? '-even' : '-odd', trProps.className),
             style: trProps.style || {}
           }, allVisibleColumns.map(makePadColumn)));
@@ -3477,7 +3495,7 @@
         };
 
         var makeColumnFooters = function makeColumnFooters() {
-          var tFootProps = getTfootProps(finalState, undefined, undefined, _this2);
+          var tFootProps = _.splitProps(getTfootProps(finalState, undefined, undefined, _this2));
 
           var tFootTrProps = _.splitProps(getTfootTrProps(finalState, undefined, undefined, _this2));
 

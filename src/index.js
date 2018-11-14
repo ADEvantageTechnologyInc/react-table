@@ -684,10 +684,8 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
     }
 
     const makePadRow = (row, i) => {
-      const trGroupProps = getTrGroupProps(finalState, undefined, undefined, this)
       const trProps = _.splitProps(getTrProps(finalState, undefined, undefined, this))
-      return (
-        <TrGroupComponent key={`pad-${i}`} {...trGroupProps}>
+      return <RF key={`row-${i}`}>
           <TrComponent
             className={classnames(
               '-padRow',
@@ -698,8 +696,7 @@ export default class ReactTable extends Methods(Lifecycle(Component)) {
           >
             {allVisibleColumns.map(makePadColumn)}
           </TrComponent>
-        </TrGroupComponent>
-      )
+        </RF>
     }
 
     const makeColumnFooter = (column, i) => {
